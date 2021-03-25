@@ -53,6 +53,7 @@ namespace UnityEngine.UI
 
         /// <summary>
         /// Callback sent when this ICanvasElement has completed layout.
+        /// Layout结束时的回调
         /// </summary>
         void LayoutComplete();
 
@@ -75,10 +76,18 @@ namespace UnityEngine.UI
     {
         private static CanvasUpdateRegistry s_Instance;
 
+        /// <summary>
+        /// LayoutUpdate flag
+        /// </summary>
         private bool m_PerformingLayoutUpdate;
+        /// <summary>
+        /// GraphicUpdate flag
+        /// </summary>
         private bool m_PerformingGraphicUpdate;
 
+        // ScrollRect
         private readonly IndexedSet<ICanvasElement> m_LayoutRebuildQueue = new IndexedSet<ICanvasElement>();
+        // Graphic, InputField
         private readonly IndexedSet<ICanvasElement> m_GraphicRebuildQueue = new IndexedSet<ICanvasElement>();
 
         protected CanvasUpdateRegistry()
@@ -99,6 +108,9 @@ namespace UnityEngine.UI
             }
         }
 
+        /// <summary>
+        /// 检查是否是 UnityEngine.Object
+        /// </summary>
         private bool ObjectValidForUpdate(ICanvasElement element)
         {
             var valid = element != null;
@@ -152,6 +164,8 @@ namespace UnityEngine.UI
         }
 
         private static readonly Comparison<ICanvasElement> s_SortLayoutFunction = SortLayoutList;
+
+        // 每帧执行, 由 Canvas.willRenderCanvases 调用
         private void PerformUpdate()
         {
             UISystemProfilerApi.BeginSample(UISystemProfilerApi.SampleType.Layout);
@@ -238,6 +252,7 @@ namespace UnityEngine.UI
         /// <summary>
         /// Try and add the given element to the layout rebuild list.
         /// Will not return if successfully added.
+        /// ScrollRect
         /// </summary>
         /// <param name="element">The element that is needing rebuilt.</param>
         public static void RegisterCanvasElementForLayoutRebuild(ICanvasElement element)
