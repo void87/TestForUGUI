@@ -171,9 +171,11 @@ namespace UnityEngine.UI
             UISystemProfilerApi.BeginSample(UISystemProfilerApi.SampleType.Layout);
             CleanInvalidItems();
 
-            m_PerformingLayoutUpdate = true;
+#region Layout Rebuild
 
+            m_PerformingLayoutUpdate = true;
             m_LayoutRebuildQueue.Sort(s_SortLayoutFunction);
+            // 三个阶段 PreLayout, Layout, PostLayout
             for (int i = 0; i <= (int)CanvasUpdate.PostLayout; i++)
             {
                 for (int j = 0; j < m_LayoutRebuildQueue.Count; j++)
@@ -197,10 +199,18 @@ namespace UnityEngine.UI
             instance.m_LayoutRebuildQueue.Clear();
             m_PerformingLayoutUpdate = false;
 
+#endregion
+
+
             // now layout is complete do culling...
             ClipperRegistry.instance.Cull();
 
+
+#region Graphic Rebuild
+
             m_PerformingGraphicUpdate = true;
+
+            // 两个阶段 PreRender, LatePreRender
             for (var i = (int)CanvasUpdate.PreRender; i < (int)CanvasUpdate.MaxUpdateValue; i++)
             {
                 for (var k = 0; k < instance.m_GraphicRebuildQueue.Count; k++)
@@ -223,6 +233,10 @@ namespace UnityEngine.UI
 
             instance.m_GraphicRebuildQueue.Clear();
             m_PerformingGraphicUpdate = false;
+
+#endregion
+
+
             UISystemProfilerApi.EndSample(UISystemProfilerApi.SampleType.Layout);
         }
 
@@ -252,9 +266,10 @@ namespace UnityEngine.UI
         /// <summary>
         /// Try and add the given element to the layout rebuild list.
         /// Will not return if successfully added.
-        /// ScrollRect
         /// </summary>
         /// <param name="element">The element that is needing rebuilt.</param>
+        ///
+        /// Runtime 只有 ScrollRect 调用
         public static void RegisterCanvasElementForLayoutRebuild(ICanvasElement element)
         {
             instance.InternalRegisterCanvasElementForLayoutRebuild(element);
@@ -284,6 +299,8 @@ namespace UnityEngine.UI
                 Debug.LogError(string.Format("Trying to add {0} for layout rebuild while we are already inside a layout rebuild loop. This is not supported.", element));
                 return false;
             }*/
+
+            Debug.Log("########ICanvasElement: " + element);
 
             return m_LayoutRebuildQueue.AddUnique(element);
         }

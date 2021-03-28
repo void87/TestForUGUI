@@ -9,6 +9,8 @@ namespace UnityEngine.UI
     /// <remarks>
     /// This is used during the CanvasUpdate loop to cull clippable elements. The clipping is called after layout, but before Graphic update.
     /// </remarks>
+    ///
+    /// 
     public class ClipperRegistry
     {
         static ClipperRegistry s_Instance;
@@ -43,6 +45,7 @@ namespace UnityEngine.UI
         {
             for (var i = 0; i < m_Clippers.Count; ++i)
             {
+                // RectMask2D.PerformClipping()
                 m_Clippers[i].PerformClipping();
             }
         }

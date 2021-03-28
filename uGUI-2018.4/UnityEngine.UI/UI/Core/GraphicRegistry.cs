@@ -43,6 +43,8 @@ namespace UnityEngine.UI
         /// </summary>
         /// <param name="c">The canvas the graphic will be associated to</param>
         /// <param name="graphic">The graphic in question.</param>
+        ///
+        /// 将 IndexedSet<Graphic> 关联到一个 Canvas
         public static void RegisterGraphicForCanvas(Canvas c, Graphic graphic)
         {
             if (c == null)

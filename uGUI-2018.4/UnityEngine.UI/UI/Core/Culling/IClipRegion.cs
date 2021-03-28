@@ -11,7 +11,10 @@ namespace UnityEngine.UI
         /// <remarks>
         /// Called after layout and before Graphic update of the Canvas update loop.
         /// </remarks>
-
+        ///
+        /// Layout
+        /// PerformClipping
+        /// Render
         void PerformClipping();
     }
 

@@ -334,6 +334,7 @@ namespace UnityEngine.UI
             }
         }
 
+        // 缓存Canvas引用
         private void CacheCanvas()
         {
             var list = ListPool<Canvas>.Get();

@@ -36,6 +36,7 @@ namespace UnityEngine.UI
             RectTransform.reapplyDrivenProperties += ReapplyDrivenProperties;
         }
 
+        // 每个 RectTransform 调用
         static void ReapplyDrivenProperties(RectTransform driven)
         {
             MarkLayoutForRebuild(driven);
@@ -156,6 +157,8 @@ namespace UnityEngine.UI
         /// <param name="rect">Rect to rebuild.</param>
         public static void MarkLayoutForRebuild(RectTransform rect)
         {
+            Debug.Log("MarkLayoutForRebuild: " + rect + ",parent: " + rect.parent != null?rect.parent:null + ",parent.parent: " + rect.parent != null? rect.parent.parent: null);
+
             if (rect == null || rect.gameObject == null)
                 return;
 
@@ -180,6 +183,7 @@ namespace UnityEngine.UI
                 }
 
                 parent = parent.parent as RectTransform;
+
             }
 
             // We know the layout root is valid if it's not the same as the rect,
@@ -214,6 +218,8 @@ namespace UnityEngine.UI
 
         private static void MarkLayoutRootForRebuild(RectTransform controller)
         {
+            Debug.Log("MarkLayoutRootForRebuilder: " + controller);
+
             if (controller == null)
                 return;
 
