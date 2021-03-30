@@ -155,10 +155,10 @@ namespace UnityEngine.UI
         /// Mark the given RectTransform as needing it's layout to be recalculated during the next layout pass.
         /// </summary>
         /// <param name="rect">Rect to rebuild.</param>
+        ///
+        /// 将含有 ILayoutGroup 的父节点 传参至 MarkLayoutRootForRebuild
         public static void MarkLayoutForRebuild(RectTransform rect)
         {
-            Debug.Log("MarkLayoutForRebuild: " + rect + ",parent: " + rect.parent != null?rect.parent:null + ",parent.parent: " + rect.parent != null? rect.parent.parent: null);
-
             if (rect == null || rect.gameObject == null)
                 return;
 
@@ -216,10 +216,11 @@ namespace UnityEngine.UI
             return false;
         }
 
+        /// <summary>
+        /// 将有 LayoutGroup 的父节点注册到 CanvasUpdateRegistry.m_LayoutRebuildQueue
+        /// </summary>
         private static void MarkLayoutRootForRebuild(RectTransform controller)
         {
-            Debug.Log("MarkLayoutRootForRebuilder: " + controller);
-
             if (controller == null)
                 return;
 

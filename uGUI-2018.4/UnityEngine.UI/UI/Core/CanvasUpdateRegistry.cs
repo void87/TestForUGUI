@@ -38,6 +38,10 @@ namespace UnityEngine.UI
     /// <summary>
     /// This is an element that can live on a Canvas.
     /// </summary>
+    ///
+    /// Graphic, LayoutRebuilder, Scrollbar, ScrollRect, InputField, Toggle, Slider
+    /// MaskableGraphic, Image, RawImage, Text
+    /// 主要是
     public interface ICanvasElement
     {
         /// <summary>
@@ -49,12 +53,15 @@ namespace UnityEngine.UI
         /// <summary>
         /// Get the transform associated with the ICanvasElement.
         /// </summary>
+        ///
+        /// Component.transform
         Transform transform { get; }
 
         /// <summary>
         /// Callback sent when this ICanvasElement has completed layout.
-        /// Layout结束时的回调
         /// </summary>
+        ///
+        /// Layout结束时的回调
         void LayoutComplete();
 
         /// <summary>
@@ -299,8 +306,6 @@ namespace UnityEngine.UI
                 Debug.LogError(string.Format("Trying to add {0} for layout rebuild while we are already inside a layout rebuild loop. This is not supported.", element));
                 return false;
             }*/
-
-            Debug.Log("########ICanvasElement: " + element);
 
             return m_LayoutRebuildQueue.AddUnique(element);
         }

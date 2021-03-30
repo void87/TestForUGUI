@@ -142,6 +142,8 @@ namespace UnityEngine.UI
     ///
     /// The component may use this information to determine the width and height to use for its own RectTransform or the RectTransforms of its children.
     /// </remarks>
+    ///
+    /// ILayoutController == ILayoutGroup == ILayoutSelfController, 只是名字不一样
     public interface ILayoutController
     {
         /// <summary>
@@ -161,6 +163,9 @@ namespace UnityEngine.UI
     /// <remarks>
     /// ILayoutGroup derives from ILayoutController and requires the same members to be implemented.
     /// </remarks>
+    ///
+    /// ScrollRect, LayoutGroup, GridLayoutGroup, HorizontalOrVerticalLayoutGroup,
+    /// HorizontalLayoutGroup, VerticalLayoutGroup
     public interface ILayoutGroup : ILayoutController
     {
     }
@@ -239,6 +244,8 @@ namespace UnityEngine.UI
     /// }
     /// </code>
     /// </example>
+    ///
+    /// 
     public interface ILayoutSelfController : ILayoutController
     {
     }
