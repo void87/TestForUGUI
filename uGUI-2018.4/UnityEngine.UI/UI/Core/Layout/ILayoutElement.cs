@@ -15,23 +15,34 @@ namespace UnityEngine.UI
     /// The minHeight, preferredHeight, and flexibleHeight properties may rely on horizontal aspects of the RectTransform, such as the width or the X component of the position.
     /// Any properties of the RectTransforms on child layout elements may always be relied on.
     /// </remarks>
+    ///
+    /// ScrollRect, Image, Text, InputField, LayoutGroup, LayoutElement, HorizontalOrVerticalLayoutGroup,
+    /// GridLayoutGroup, HorizontalLayoutGroup, VerticalLayoutGroup
+    /// 
+    /// ILayoutElement 的方法只有在 CanvasUpdate.Layout 时间才会执行
     public interface ILayoutElement
     {
         /// <summary>
         /// After this method is invoked, layout horizontal input properties should return up-to-date values.
         ///  Children will already have up-to-date layout horizontal inputs when this methods is called.
         /// </summary>
+        ///
+        /// LayoutGroup, GridLayoutGroup, HorizontalLayoutGroup, VerticalLayoutGroup
         void CalculateLayoutInputHorizontal();
 
         /// <summary>
         ///After this method is invoked, layout vertical input properties should return up-to-date values.
         ///Children will already have up-to-date layout vertical inputs when this methods is called.
         /// </summary>
+        ///
+        /// GridLayoutGroup, HorizontalLayoutGroup, VerticalLayoutGroup
         void CalculateLayoutInputVertical();
 
         /// <summary>
         /// The minimum width this layout element may be allocated.
         /// </summary>
+        ///
+        /// ScrollRect, Image, InputField, LayoutElement, Text, LayoutGroup
         float minWidth { get; }
 
         /// <summary>
@@ -40,6 +51,8 @@ namespace UnityEngine.UI
         /// <remarks>
         /// PreferredWidth can be set to -1 to remove the size.
         /// </remarks>
+        ///
+        /// Image, ScrollRect, InputField, Text, LayoutElement, LayoutGroup
         float preferredWidth { get; }
 
         /// <summary>
@@ -73,12 +86,15 @@ namespace UnityEngine.UI
         ///}
         ///</code>
         ///</example>
-
+        ///
+        /// Image, InputField, ScrollRect, LayoutElement, LayoutGroup, Text
         float flexibleWidth { get; }
 
         /// <summary>
         /// The minimum height this layout element may be allocated.
         /// </summary>
+        ///
+        /// ScrollRect, InputField, Image, LayoutGroup, Text, LayoutElement
         float minHeight { get; }
 
         /// <summary>
@@ -87,6 +103,8 @@ namespace UnityEngine.UI
         /// <remarks>
         /// PreferredHeight can be set to -1 to remove the size.
         /// </remarks>
+        ///
+        /// InputField, ScrollRect, Image, Text, LayoutElement, LayoutGroup
         float preferredHeight { get; }
 
         /// <summary>
@@ -117,6 +135,8 @@ namespace UnityEngine.UI
         ///}
         ///</code>
         ///</example>
+        ///
+        /// InputField, ScrollRect, Image, LayoutElement, Text, LayoutGroup
         float flexibleHeight { get; }
 
         /// <summary>
@@ -125,6 +145,8 @@ namespace UnityEngine.UI
         /// <remarks>
         /// If multiple components on the same GameObject implement the ILayoutElement interface, the values provided by components that return a higher priority value are given priority. However, values less than zero are ignored. This way a component can override only select properties by leaving the remaning values to be -1 or other values less than zero.
         /// </remarks>
+        ///
+        /// InputField, Image, ScrollRect, Text, LayoutElement, LayoutGroup
         int layoutPriority { get; }
     }
 
@@ -149,11 +171,15 @@ namespace UnityEngine.UI
         /// <summary>
         /// Callback invoked by the auto layout system which handles horizontal aspects of the layout.
         /// </summary>
+        ///
+        /// ContentSizeFitter, ScrollRect, GridLayoutGroup, HorizontalLayoutGroup, VerticalLayoutGroup
         void SetLayoutHorizontal();
 
         /// <summary>
         /// Callback invoked by the auto layout system which handles vertical aspects of the layout.
         /// </summary>
+        ///
+        /// ContentSizeFitter, ScrollRect, GridLayoutGroup, HorizontalLayoutGroup, VerticalLayoutGroup
         void SetLayoutVertical();
     }
 
@@ -245,7 +271,8 @@ namespace UnityEngine.UI
     /// </code>
     /// </example>
     ///
-    /// 
+    ///
+    /// AspectRatioFitter, ContentSizeFitter
     public interface ILayoutSelfController : ILayoutController
     {
     }

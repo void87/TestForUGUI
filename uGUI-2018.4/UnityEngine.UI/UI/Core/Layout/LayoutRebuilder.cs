@@ -19,6 +19,7 @@ namespace UnityEngine.UI
 
         static ObjectPool<LayoutRebuilder> s_Rebuilders = new ObjectPool<LayoutRebuilder>(null, x => x.Clear());
 
+        // 将 RectTransform 封装称 LayoutRebuilder
         private void Initialize(RectTransform controller)
         {
             m_ToRebuild = controller;
@@ -188,6 +189,9 @@ namespace UnityEngine.UI
 
             // We know the layout root is valid if it's not the same as the rect,
             // since we checked that above. But if they're the same we still need to check.
+            //
+            // 如果没有父节点, 或者父节点上没有 ILayoutController,
+            // 是不会进 MarkLayoutRootForRebuild
             if (layoutRoot == rect && !ValidController(layoutRoot, comps))
             {
                 ListPool<Component>.Release(comps);
@@ -198,6 +202,7 @@ namespace UnityEngine.UI
             ListPool<Component>.Release(comps);
         }
 
+        // 检查 layoutRoot 是否包含 ILayoutController
         private static bool ValidController(RectTransform layoutRoot, List<Component> comps)
         {
             if (layoutRoot == null || layoutRoot.gameObject == null)
@@ -226,6 +231,7 @@ namespace UnityEngine.UI
 
             var rebuilder = s_Rebuilders.Get();
             rebuilder.Initialize(controller);
+
             if (!CanvasUpdateRegistry.TryRegisterCanvasElementForLayoutRebuild(rebuilder))
                 s_Rebuilders.Release(rebuilder);
         }

@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 namespace UnityEngine.UI
 {
-    // 用于赋值检查辅助类，如果值没有改变就不重新赋值
+    // 用于赋值检查的辅助类，如果值没有改变就不重新赋值
     internal static class SetPropertyUtility
     {
         public static bool SetColor(ref Color currentValue, Color newValue)

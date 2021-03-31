@@ -201,6 +201,8 @@ namespace UnityEngine.UI
         /// <remarks>
         /// Send a OnDirtyLayoutCallback notification if any elements are registered. See RegisterDirtyLayoutCallback
         /// </remarks>
+        ///
+        /// 标记 Layout Dirty, 如果有父 ILayoutController, 则会在 Layout阶段处理父节点
         public virtual void SetLayoutDirty()
         {
             if (!IsActive())

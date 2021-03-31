@@ -41,13 +41,16 @@ namespace UnityEngine.UI
     ///
     /// Graphic, LayoutRebuilder, Scrollbar, ScrollRect, InputField, Toggle, Slider
     /// MaskableGraphic, Image, RawImage, Text
-    /// 主要是
+    /// 主要是 Rebuild
     public interface ICanvasElement
     {
         /// <summary>
         /// Rebuild the element for the given stage.
         /// </summary>
         /// <param name="executing">The current CanvasUpdate stage being rebuild.</param>
+        ///
+        /// Editor      Scrollbar, Slider, Toggle
+        /// Runtime     InputField, Graphic, ScrollRect, LayoutRebuilder
         void Rebuild(CanvasUpdate executing);
 
         /// <summary>
@@ -99,6 +102,7 @@ namespace UnityEngine.UI
 
         protected CanvasUpdateRegistry()
         {
+            // 一切的开始
             Canvas.willRenderCanvases += PerformUpdate;
         }
 
@@ -183,6 +187,7 @@ namespace UnityEngine.UI
             m_PerformingLayoutUpdate = true;
             m_LayoutRebuildQueue.Sort(s_SortLayoutFunction);
             // 三个阶段 PreLayout, Layout, PostLayout
+            // 只有 ILayoutController 会执行
             for (int i = 0; i <= (int)CanvasUpdate.PostLayout; i++)
             {
                 for (int j = 0; j < m_LayoutRebuildQueue.Count; j++)
@@ -206,10 +211,12 @@ namespace UnityEngine.UI
             instance.m_LayoutRebuildQueue.Clear();
             m_PerformingLayoutUpdate = false;
 
-#endregion
+            #endregion
 
 
             // now layout is complete do culling...
+            //
+            // IClipper.PerformClipping()
             ClipperRegistry.instance.Cull();
 
 
@@ -218,6 +225,8 @@ namespace UnityEngine.UI
             m_PerformingGraphicUpdate = true;
 
             // 两个阶段 PreRender, LatePreRender
+            // PreRender， Graphic 会执行
+            // LatePreRender, InputField 会执行
             for (var i = (int)CanvasUpdate.PreRender; i < (int)CanvasUpdate.MaxUpdateValue; i++)
             {
                 for (var k = 0; k < instance.m_GraphicRebuildQueue.Count; k++)
@@ -295,6 +304,7 @@ namespace UnityEngine.UI
             return instance.InternalRegisterCanvasElementForLayoutRebuild(element);
         }
 
+        // 将 LayoutRebuilder 添加到 m_LayoutRebuildQueue
         private bool InternalRegisterCanvasElementForLayoutRebuild(ICanvasElement element)
         {
             if (m_LayoutRebuildQueue.Contains(element))
@@ -315,6 +325,8 @@ namespace UnityEngine.UI
         /// Will not return if successfully added.
         /// </summary>
         /// <param name="element">The element that is needing rebuilt.</param>
+        ///
+        /// Graphic, InputField
         public static void RegisterCanvasElementForGraphicRebuild(ICanvasElement element)
         {
             instance.InternalRegisterCanvasElementForGraphicRebuild(element);
@@ -328,6 +340,8 @@ namespace UnityEngine.UI
         /// True if the element was successfully added to the rebuilt list.
         /// False if either already inside a Graphic Update loop OR has already been added to the list.
         /// </returns>
+        ///
+        /// 没有使用
         public static bool TryRegisterCanvasElementForGraphicRebuild(ICanvasElement element)
         {
             return instance.InternalRegisterCanvasElementForGraphicRebuild(element);
