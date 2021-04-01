@@ -55,16 +55,22 @@ namespace UnityEngine.UI
             /// <summary>
             /// Unrestricted movement. The content can move forever.
             /// </summary>
+            ///
+            /// 移动没有限制
             Unrestricted,
 
             /// <summary>
             /// Elastic movement. The content is allowed to temporarily move beyond the container, but is pulled back elastically.
             /// </summary>
+            ///
+            /// 移动有弹性效果
             Elastic,
 
             /// <summary>
             /// Clamped movement. The content can not be moved beyond its container.
             /// </summary>
+            ///
+            /// 移动不能超出父容器
             Clamped,
         }
 
@@ -217,6 +223,8 @@ namespace UnityEngine.UI
         /// }
         /// </code>
         /// </example>
+        ///
+        /// 内容移动回弹系数
         public float elasticity { get { return m_Elasticity; } set { m_Elasticity = value; } }
 
         [SerializeField]
@@ -277,6 +285,8 @@ namespace UnityEngine.UI
         /// <summary>
         /// Reference to the viewport RectTransform that is the parent of the content RectTransform.
         /// </summary>
+        ///
+        /// 默认 ScrollView->Viewport.RectTransform
         public RectTransform viewport { get { return m_Viewport; } set { m_Viewport = value; SetDirtyCaching(); } }
 
         [SerializeField]
@@ -444,6 +454,7 @@ namespace UnityEngine.UI
 
         private RectTransform m_ViewRect;
 
+        // ScrollView->Viewport.RectTransform || ScrollView->RectTransform
         protected RectTransform viewRect
         {
             get
@@ -616,6 +627,7 @@ namespace UnityEngine.UI
             m_Velocity = Vector2.zero;
         }
 
+        // Mouse 触发
         public virtual void OnScroll(PointerEventData data)
         {
             if (!IsActive())
@@ -1373,11 +1385,15 @@ namespace UnityEngine.UI
         /// <summary>
         /// Override to alter or add to the code that caches data to avoid repeated heavy operations.
         /// </summary>
+        ///
+        /// For Layout
         protected void SetDirtyCaching()
         {
             if (!IsActive())
                 return;
 
+
+            // 下面两个方法都会尝试添加到 m_LayoutRebuildQueue
             CanvasUpdateRegistry.RegisterCanvasElementForLayoutRebuild(this);
             LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
         }

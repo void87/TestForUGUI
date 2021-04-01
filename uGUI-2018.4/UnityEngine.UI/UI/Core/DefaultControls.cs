@@ -15,6 +15,8 @@ namespace UnityEngine.UI
     ///
     /// Note that the details of the setup of the UI controls created by the methods in this class may change with later revisions of the UI system.As such, they are not guaranteed to be 100% backwards compatible. It is recommended not to rely on the specific hierarchies of the GameObjects created by these methods, and limit your code to only interface with the root GameObject created by each method.
     /// </remarks>
+    ///
+    /// 创建 默认控件
     public static class DefaultControls
     {
         /// <summary>

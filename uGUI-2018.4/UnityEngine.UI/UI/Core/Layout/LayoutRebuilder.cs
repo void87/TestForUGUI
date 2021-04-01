@@ -66,6 +66,8 @@ namespace UnityEngine.UI
         /// Normal use of the layout system should not use this method. Instead MarkLayoutForRebuild should be used instead, which triggers a delayed layout rebuild during the next layout pass. The delayed rebuild automatically handles objects in the entire layout hierarchy in the correct order, and prevents multiple recalculations for the same layout elements.
         /// However, for special layout calculation needs, ::ref::ForceRebuildLayoutImmediate can be used to get the layout of a sub-tree resolved immediately. This can even be done from inside layout calculation methods such as ILayoutController.SetLayoutHorizontal orILayoutController.SetLayoutVertical. Usage should be restricted to cases where multiple layout passes are unavaoidable despite the extra cost in performance.
         /// </remarks>
+        ///
+        /// 跳过 m_LayoutRebuildQueue, 直接 Layout
         public static void ForceRebuildLayoutImmediate(RectTransform layoutRoot)
         {
             var rebuilder = s_Rebuilders.Get();

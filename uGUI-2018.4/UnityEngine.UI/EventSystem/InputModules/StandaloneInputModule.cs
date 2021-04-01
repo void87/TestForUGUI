@@ -254,6 +254,7 @@ namespace UnityEngine.EventSystems
                 ProcessMouseEvent();
         }
 
+        // 处理Touch事件
         private bool ProcessTouchEvents()
         {
             for (int i = 0; i < input.touchCount; ++i)

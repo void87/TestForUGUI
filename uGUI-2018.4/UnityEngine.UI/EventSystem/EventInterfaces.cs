@@ -277,6 +277,8 @@ namespace UnityEngine.EventSystems
     /// <remarks>
     /// Criteria for this event is implementation dependent. For example see StandAloneInputModule.
     /// </remarks>
+    ///
+    /// Mouse才有的事件
     public interface IScrollHandler : IEventSystemHandler
     {
         /// <summary>

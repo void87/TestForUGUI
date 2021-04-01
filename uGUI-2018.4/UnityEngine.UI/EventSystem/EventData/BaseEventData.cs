@@ -3,6 +3,10 @@ namespace UnityEngine.EventSystems
     /// <summary>
     /// A class that can be used for sending simple events via the event system.
     /// </summary>
+    ///
+    /// 抽象事件数据
+    ///  - 属性：是否使用
+    ///  - 方法：重置是否使用
     public abstract class AbstractEventData
     {
         protected bool m_Used;
@@ -38,6 +42,9 @@ namespace UnityEngine.EventSystems
     /// <summary>
     /// A class that contains the base event data that is common to all event types in the new EventSystem.
     /// </summary>
+    ///
+    /// 基础事件数据, 通过 EventSystem 构造
+    ///  - 属性：EventSystem, BaseInputModule, GameObject(当前选择的对象)
     public class BaseEventData : AbstractEventData
     {
         private readonly EventSystem m_EventSystem;
