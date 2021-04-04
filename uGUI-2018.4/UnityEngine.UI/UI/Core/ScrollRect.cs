@@ -130,6 +130,8 @@ namespace UnityEngine.UI
         /// }
         /// </code>
         /// </example>
+        ///
+        /// ScrollView->Viewport->Content
         public RectTransform content { get { return m_Content; } set { m_Content = value; } }
 
         [SerializeField]
@@ -1236,7 +1238,9 @@ namespace UnityEngine.UI
         /// </summary>
         protected void UpdateBounds()
         {
+            // center 按 pivot 计算
             m_ViewBounds = new Bounds(viewRect.rect.center, viewRect.rect.size);
+            // 获取 Content 的 Bounds
             m_ContentBounds = GetBounds();
 
             if (m_Content == null)
@@ -1245,10 +1249,13 @@ namespace UnityEngine.UI
             Vector3 contentSize = m_ContentBounds.size;
             Vector3 contentPos = m_ContentBounds.center;
             var contentPivot = m_Content.pivot;
+
             AdjustBounds(ref m_ViewBounds, ref contentPivot, ref contentSize, ref contentPos);
+
             m_ContentBounds.size = contentSize;
             m_ContentBounds.center = contentPos;
 
+            // MovementType.Clamped 条件下， 让Content的移动不能超出View
             if (movementType == MovementType.Clamped)
             {
                 // Adjust content so that content bounds bottom (right side) is never higher (to the left) than the view bounds bottom (right side).
@@ -1285,6 +1292,7 @@ namespace UnityEngine.UI
             }
         }
 
+        // 根据 View.Bounds 调整 Content.Bounds
         internal static void AdjustBounds(ref Bounds viewBounds, ref Vector2 contentPivot, ref Vector3 contentSize, ref Vector3 contentPos)
         {
             // Make sure content bounds are at least as large as view by adding padding if not.
@@ -1308,6 +1316,7 @@ namespace UnityEngine.UI
         }
 
         private readonly Vector3[] m_Corners = new Vector3[4];
+        // 获取 Content的Bounds
         private Bounds GetBounds()
         {
             if (m_Content == null)

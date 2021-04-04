@@ -6,6 +6,8 @@ namespace UnityEngine.UI
     /// <remarks>
     /// When a Graphic sets a material is is passed (in order) to any components on the GameObject that implement IMaterialModifier. This component can modify the material to be used for rendering.
     /// </remarks>
+    ///
+    /// Mask, MaskableGraphic, Text, RawImage, Image
     public interface IMaterialModifier
     {
         /// <summary>

@@ -6,6 +6,8 @@ namespace UnityEngine.UI
     /// <summary>
     /// Mask related utility class. This class provides masking-specific utility functions.
     /// </summary>
+    ///
+    /// Mask 工具类
     public class MaskUtilities
     {
         /// <summary>

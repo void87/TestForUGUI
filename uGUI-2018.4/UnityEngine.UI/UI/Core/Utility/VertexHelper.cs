@@ -36,6 +36,8 @@ namespace UnityEngine.UI
     /// }
     /// </code>
     /// </example>
+    ///
+    /// 顶点辅助类
     public class VertexHelper : IDisposable
     {
         private List<Vector3> m_Positions;

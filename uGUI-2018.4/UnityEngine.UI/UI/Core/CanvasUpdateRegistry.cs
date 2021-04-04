@@ -41,7 +41,7 @@ namespace UnityEngine.UI
     ///
     /// Graphic, LayoutRebuilder, Scrollbar, ScrollRect, InputField, Toggle, Slider
     /// MaskableGraphic, Image, RawImage, Text
-    /// 主要是 Rebuild
+    /// 主要是 LayoutRebuild, GraphicRebuild
     public interface ICanvasElement
     {
         /// <summary>
@@ -347,6 +347,7 @@ namespace UnityEngine.UI
             return instance.InternalRegisterCanvasElementForGraphicRebuild(element);
         }
 
+        // 将Graphic, InputField 添加到 m_GraphicRebuildQueue
         private bool InternalRegisterCanvasElementForGraphicRebuild(ICanvasElement element)
         {
             if (m_PerformingGraphicUpdate)

@@ -4,6 +4,7 @@ using System.Reflection;
 
 namespace UnityEngine.UI
 {
+    // 反射缓存
     internal class ReflectionMethodsCache
     {
         public delegate bool Raycast3DCallback(Ray r, out RaycastHit hit, float f, int i);

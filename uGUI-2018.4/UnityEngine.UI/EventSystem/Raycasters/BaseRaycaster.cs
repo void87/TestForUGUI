@@ -17,11 +17,15 @@ namespace UnityEngine.EventSystems
         /// </summary>
         /// <param name="eventData">Current event data.</param>
         /// <param name="resultAppendList">List of hit Objects.</param>
+        ///
+        /// 射线检测
         public abstract void Raycast(PointerEventData eventData, List<RaycastResult> resultAppendList);
 
         /// <summary>
         /// The camera that will generate rays for this raycaster.
         /// </summary>
+        ///
+        /// 发射射线的摄像机
         public abstract Camera eventCamera { get; }
 
         [Obsolete("Please use sortOrderPriority and renderOrderPriority", false)]
@@ -33,6 +37,8 @@ namespace UnityEngine.EventSystems
         /// <summary>
         /// Priority of the raycaster based upon sort order.
         /// </summary>
+        ///
+        /// base on sort order
         public virtual int sortOrderPriority
         {
             get { return int.MinValue; }
@@ -41,6 +47,8 @@ namespace UnityEngine.EventSystems
         /// <summary>
         /// Priority of the raycaster based upon render order.
         /// </summary>
+        ///
+        /// base on render order
         public virtual int renderOrderPriority
         {
             get { return int.MinValue; }

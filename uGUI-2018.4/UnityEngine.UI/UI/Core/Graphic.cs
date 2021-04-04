@@ -85,7 +85,8 @@ namespace UnityEngine.UI
         /// <summary>
         /// Default material used to draw UI elements if no explicit material was specified.
         /// </summary>
-
+        ///
+        /// 默认材质
         static public Material defaultGraphicMaterial
         {
             get
@@ -145,6 +146,8 @@ namespace UnityEngine.UI
         /// }
         /// </code>
         /// </example>
+        ///
+        /// 默认材质的颜色
         public virtual Color color { get { return m_Color; } set { if (SetPropertyUtility.SetColor(ref m_Color, value)) SetVerticesDirty(); } }
 
         [SerializeField] private bool m_RaycastTarget = true;
@@ -152,10 +155,13 @@ namespace UnityEngine.UI
         /// <summary>
         /// Should this graphic be considered a target for raycasting?
         /// </summary>
+        ///
+        /// 是否可以被射线检测
         public virtual bool raycastTarget { get { return m_RaycastTarget; } set { m_RaycastTarget = value; } }
 
         [NonSerialized] private RectTransform m_RectTransform;
         [NonSerialized] private CanvasRenderer m_CanvasRenderer;
+        // Graphic 关联的 Canvas
         [NonSerialized] private Canvas m_Canvas;
 
         [NonSerialized] private bool m_VertsDirty;
@@ -220,6 +226,8 @@ namespace UnityEngine.UI
         /// <remarks>
         /// Send a OnDirtyVertsCallback notification if any elements are registered. See RegisterDirtyVerticesCallback
         /// </remarks>
+        ///
+        /// GraphicRebuild
         public virtual void SetVerticesDirty()
         {
             if (!IsActive())
@@ -238,6 +246,8 @@ namespace UnityEngine.UI
         /// <remarks>
         /// Send a OnDirtyMaterialCallback notification if any elements are registered. See RegisterDirtyMaterialCallback
         /// </remarks>
+        ///
+        /// GraphicRebuild
         public virtual void SetMaterialDirty()
         {
             if (!IsActive())
@@ -555,6 +565,8 @@ namespace UnityEngine.UI
         /// <summary>
         /// Call to update the Material of the graphic onto the CanvasRenderer.
         /// </summary>
+        ///
+        /// 更新材质和材质上的贴图
         protected virtual void UpdateMaterial()
         {
             if (!IsActive())
@@ -576,6 +588,7 @@ namespace UnityEngine.UI
                 DoMeshGeneration();
         }
 
+        // 更新网格
         private void DoMeshGeneration()
         {
             if (rectTransform != null && rectTransform.rect.width >= 0 && rectTransform.rect.height >= 0)
@@ -622,6 +635,7 @@ namespace UnityEngine.UI
             canvasRenderer.SetMesh(workerMesh);
         }
 
+        // Shared UI Mesh
         protected static Mesh workerMesh
         {
             get

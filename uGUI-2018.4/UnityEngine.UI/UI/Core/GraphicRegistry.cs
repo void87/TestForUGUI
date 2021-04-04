@@ -70,6 +70,8 @@ namespace UnityEngine.UI
         /// </summary>
         /// <param name="c">The canvas that should be associated with the graphic</param>
         /// <param name="graphic">The graphic to remove.</param>
+        ///
+        /// 移除和 Canvas 相关联的 IndexedSet<Graphic> 中的 Graphic
         public static void UnregisterGraphicForCanvas(Canvas c, Graphic graphic)
         {
             if (c == null)
@@ -92,6 +94,8 @@ namespace UnityEngine.UI
         /// </summary>
         /// <param name="canvas">The canvas whose Graphics we are looking for</param>
         /// <returns>The list of all Graphics for the given Canvas.</returns>
+        ///
+        /// 获取与 Canvas相关的 IndexedSet<Graphic>
         public static IList<Graphic> GetGraphicsForCanvas(Canvas canvas)
         {
             IndexedSet<Graphic> graphics;

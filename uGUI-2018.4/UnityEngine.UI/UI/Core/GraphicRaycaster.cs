@@ -108,6 +108,7 @@ namespace UnityEngine.UI
             }
         }
 
+        // 检测到的 List<Graphic>
         [NonSerialized] private List<Graphic> m_RaycastResults = new List<Graphic>();
 
         /// <summary>
@@ -124,6 +125,7 @@ namespace UnityEngine.UI
             if (canvasGraphics == null || canvasGraphics.Count == 0)
                 return;
 
+            // 显示器索引
             int displayIndex;
             var currentEventCamera = eventCamera; // Propery can call Camera.main, so cache the reference
 
