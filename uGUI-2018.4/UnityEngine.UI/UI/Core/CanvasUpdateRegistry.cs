@@ -82,6 +82,8 @@ namespace UnityEngine.UI
     /// <summary>
     /// A place where CanvasElements can register themselves for rebuilding.
     /// </summary>
+    ///
+    /// Perform LayoutRebuild & GraphicRebuild For All ICanvasElement
     public class CanvasUpdateRegistry
     {
         private static CanvasUpdateRegistry s_Instance;

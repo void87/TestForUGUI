@@ -3,7 +3,8 @@ namespace UnityEngine.UI
     /// <summary>
     /// Helper class containing generic functions used throughout the UI library.
     /// </summary>
-
+    ///
+    /// 用于Destroy
     internal static class Misc
     {
         /// <summary>

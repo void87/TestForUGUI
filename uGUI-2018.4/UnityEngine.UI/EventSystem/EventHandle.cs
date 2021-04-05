@@ -6,6 +6,8 @@ namespace UnityEngine.EventSystems
     /// <summary>
     /// Enum that tracks event State.
     /// </summary>
+    ///
+    /// 未使用
     public enum EventHandle
     {
         Unused = 0,

@@ -5,6 +5,7 @@ namespace UnityEngine.UI
 {
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     [Obsolete("Use IMeshModifier instead", true)]
+    // 弃用
     public interface IVertexModifier
     {
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
@@ -12,6 +13,7 @@ namespace UnityEngine.UI
         void ModifyVertices(List<UIVertex> verts);
     }
 
+    // 使用 VertexHelper 修改 Mesh
     public interface IMeshModifier
     {
         [Obsolete("use IMeshModifier.ModifyMesh (VertexHelper verts) instead", false)]
