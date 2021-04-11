@@ -91,10 +91,12 @@ namespace UnityEngine.UI
         /// <summary>
         /// LayoutUpdate flag
         /// </summary>
+        /// 当前是否正在执行LayoutRebuild
         private bool m_PerformingLayoutUpdate;
         /// <summary>
         /// GraphicUpdate flag
         /// </summary>
+        /// 当前是否正在执行GraphicRebuild
         private bool m_PerformingGraphicUpdate;
 
         // ScrollRect
@@ -398,6 +400,7 @@ namespace UnityEngine.UI
         /// Are graphics layouts currently being calculated..
         /// </summary>
         /// <returns>True if the rebuild loop is CanvasUpdate.Prelayout, CanvasUpdate.Layout or CanvasUpdate.Postlayout</returns>
+        /// 当前是否正在执行LayoutRebuild
         public static bool IsRebuildingLayout()
         {
             return instance.m_PerformingLayoutUpdate;

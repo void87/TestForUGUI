@@ -304,10 +304,12 @@ namespace UnityEngine.UI
         {
             if (!IsActive())
                 return;
-
+            // 没有执行LayoutRebuild
             if (!CanvasUpdateRegistry.IsRebuildingLayout())
+                // 添加到CanvasUpdateRegistry.m_LayoutRebuildQueue
                 LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
             else
+                // 等一会在合适的时间加入到CanvasUpdateRegistry.m_LayoutRebuildQueue
                 StartCoroutine(DelayedSetDirty(rectTransform));
         }
 

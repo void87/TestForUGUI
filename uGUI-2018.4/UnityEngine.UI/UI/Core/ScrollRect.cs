@@ -134,6 +134,7 @@ namespace UnityEngine.UI
         /// ScrollView->Viewport->Content
         public RectTransform content { get { return m_Content; } set { m_Content = value; } }
 
+        // 是否可以水平滚动
         [SerializeField]
         private bool m_Horizontal = true;
 
@@ -163,6 +164,7 @@ namespace UnityEngine.UI
         /// </example>
         public bool horizontal { get { return m_Horizontal; } set { m_Horizontal = value; } }
 
+        // 是否可以垂直滚动
         [SerializeField]
         private bool m_Vertical = true;
 
@@ -238,6 +240,9 @@ namespace UnityEngine.UI
         /// <remarks>
         /// Inertia means that the scrollrect content will keep scrolling for a while after being dragged. It gradually slows down according to the decelerationRate.
         /// </remarks>
+        ///
+        /// 惯性，Content 在拖动后会保持滚动一段时间
+        /// 通过 decelerationRate 减速
         public bool inertia { get { return m_Inertia; } set { m_Inertia = value; } }
 
         [SerializeField]
@@ -268,6 +273,8 @@ namespace UnityEngine.UI
         /// }
         /// </code>
         /// </example>
+        ///
+        /// 惯性滚动减速速率
         public float decelerationRate { get { return m_DecelerationRate; } set { m_DecelerationRate = value; } }
 
         [SerializeField]
@@ -391,6 +398,7 @@ namespace UnityEngine.UI
         /// </summary>
         public ScrollbarVisibility verticalScrollbarVisibility { get { return m_VerticalScrollbarVisibility; } set { m_VerticalScrollbarVisibility = value; SetDirtyCaching(); } }
 
+        // 
         [SerializeField]
         private float m_HorizontalScrollbarSpacing;
 
@@ -469,7 +477,9 @@ namespace UnityEngine.UI
             }
         }
 
+        // Content的Bounds
         protected Bounds m_ContentBounds;
+        // Viewport的Bounds
         private Bounds m_ViewBounds;
 
         private Vector2 m_Velocity;
@@ -488,12 +498,17 @@ namespace UnityEngine.UI
         private Vector2 m_PrevPosition = Vector2.zero;
         private Bounds m_PrevContentBounds;
         private Bounds m_PrevViewBounds;
+
+        // 是否已经 LayoutRebuild 过了
         [NonSerialized]
         private bool m_HasRebuiltLayout = false;
 
+        // HorizontalScroll是否扩展Scroll
         private bool m_HSliderExpand;
         private bool m_VSliderExpand;
+        // HorizontalScroll的高度
         private float m_HSliderHeight;
+        // VerticalScroll的宽度
         private float m_VSliderWidth;
 
         [System.NonSerialized] private RectTransform m_Rect;
@@ -528,6 +543,7 @@ namespace UnityEngine.UI
                 UpdateScrollbars(Vector2.zero);
                 UpdatePrevData();
 
+                // 标记已经LayoutRebuild
                 m_HasRebuiltLayout = true;
             }
         }
@@ -538,16 +554,23 @@ namespace UnityEngine.UI
         public virtual void GraphicUpdateComplete()
         {}
 
+        // 缓存一些相关数据
         void UpdateCachedData()
         {
             Transform transform = this.transform;
+            // 设置 HorizontalScrollRect
             m_HorizontalScrollbarRect = m_HorizontalScrollbar == null ? null : m_HorizontalScrollbar.transform as RectTransform;
+            // 设置 VerticalScrollRect
             m_VerticalScrollbarRect = m_VerticalScrollbar == null ? null : m_VerticalScrollbar.transform as RectTransform;
 
             // These are true if either the elements are children, or they don't exist at all.
+            // ScrollRect 是否有 Viewport 子物体
             bool viewIsChild = (viewRect.parent == transform);
+            // ScrollRect 是否有 HorizontalScroll 子物体
             bool hScrollbarIsChild = (!m_HorizontalScrollbarRect || m_HorizontalScrollbarRect.parent == transform);
+            // ScrollRect 是否有 VerticalScroll 子物体
             bool vScrollbarIsChild = (!m_VerticalScrollbarRect || m_VerticalScrollbarRect.parent == transform);
+            // ScrollRect 是否同时有 Viewport, HorizontalScroll, VerticalScroll 3个子物体
             bool allAreChildren = (viewIsChild && hScrollbarIsChild && vScrollbarIsChild);
 
             m_HSliderExpand = allAreChildren && m_HorizontalScrollbarRect && horizontalScrollbarVisibility == ScrollbarVisibility.AutoHideAndExpandViewport;
@@ -615,9 +638,11 @@ namespace UnityEngine.UI
             return base.IsActive() && m_Content != null;
         }
 
+        // 确保已经 LayoutRebuild
         private void EnsureLayoutHasRebuilt()
         {
             if (!m_HasRebuiltLayout && !CanvasUpdateRegistry.IsRebuildingLayout())
+                // 强制执行CanvasUpdateRegistry.PerformUpdate
                 Canvas.ForceUpdateCanvases();
         }
 
@@ -704,7 +729,9 @@ namespace UnityEngine.UI
             UpdateBounds();
 
             m_PointerStartLocalCursor = Vector2.zero;
+            // 记录鼠标点击时，鼠标在Viewport局部空间的坐标
             RectTransformUtility.ScreenPointToLocalPointInRectangle(viewRect, eventData.position, eventData.pressEventCamera, out m_PointerStartLocalCursor);
+            // 记录拖动开始时， Content 的起始 anchoredPosition
             m_ContentStartPosition = m_Content.anchoredPosition;
             m_Dragging = true;
         }
@@ -1056,19 +1083,24 @@ namespace UnityEngine.UI
             SetDirty();
         }
 
+        // 是否需要HorizontalScroll
         private bool hScrollingNeeded
         {
             get
             {
+                // 只要 Content.x 大于 Viewport.x 就需要
                 if (Application.isPlaying)
                     return m_ContentBounds.size.x > m_ViewBounds.size.x + 0.01f;
                 return true;
             }
         }
+
+        // 是否需要VerticalScroll
         private bool vScrollingNeeded
         {
             get
             {
+                // 只要 Content.y 大于 Viewport.y 就需要
                 if (Application.isPlaying)
                     return m_ContentBounds.size.y > m_ViewBounds.size.y + 0.01f;
                 return true;
@@ -1236,6 +1268,8 @@ namespace UnityEngine.UI
         /// <summary>
         /// Calculate the bounds the ScrollRect should be using.
         /// </summary>
+        ///
+        /// 计算 Viewport.Bounds, Content.Bounds
         protected void UpdateBounds()
         {
             // center 按 pivot 计算
@@ -1246,13 +1280,18 @@ namespace UnityEngine.UI
             if (m_Content == null)
                 return;
 
+            // Content的宽高
             Vector3 contentSize = m_ContentBounds.size;
+            // Content相对于Pivot的Center
             Vector3 contentPos = m_ContentBounds.center;
+            // Content的pivot
             var contentPivot = m_Content.pivot;
 
             AdjustBounds(ref m_ViewBounds, ref contentPivot, ref contentSize, ref contentPos);
 
+            // 重新赋值 Content的size
             m_ContentBounds.size = contentSize;
+            // 重新赋值 Content的center
             m_ContentBounds.center = contentPos;
 
             // MovementType.Clamped 条件下， 让Content的移动不能超出View
@@ -1302,15 +1341,22 @@ namespace UnityEngine.UI
             // We use the pivot of the content rect to decide in which directions the content bounds should be expanded.
             // E.g. if pivot is at top, bounds are expanded downwards.
             // This also works nicely when ContentSizeFitter is used on the content.
+            // 获取 Viewport.Bounds.size 和 Content.Bounds.size
             Vector3 excess = viewBounds.size - contentSize;
+            // x轴Viewport大于Content
             if (excess.x > 0)
             {
+                // 调整 Content pos.x
                 contentPos.x -= excess.x * (contentPivot.x - 0.5f);
+                // 调整 Content size.x
                 contentSize.x = viewBounds.size.x;
             }
+            // x轴Viewport大于Content
             if (excess.y > 0)
             {
+                // 调整 Content pos.y
                 contentPos.y -= excess.y * (contentPivot.y - 0.5f);
+                // 调整 Content size.y
                 contentSize.y = viewBounds.size.y;
             }
         }
@@ -1321,16 +1367,19 @@ namespace UnityEngine.UI
         {
             if (m_Content == null)
                 return new Bounds();
+            // 获取 Content 四个角的世界坐标
             m_Content.GetWorldCorners(m_Corners);
             var viewWorldToLocalMatrix = viewRect.worldToLocalMatrix;
             return InternalGetBounds(m_Corners, ref viewWorldToLocalMatrix);
         }
 
+        // 只用于获取 Content的Bounds
         internal static Bounds InternalGetBounds(Vector3[] corners, ref Matrix4x4 viewWorldToLocalMatrix)
         {
             var vMin = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
             var vMax = new Vector3(float.MinValue, float.MinValue, float.MinValue);
 
+            // 获取4个角的局部坐标
             for (int j = 0; j < 4; j++)
             {
                 Vector3 v = viewWorldToLocalMatrix.MultiplyPoint3x4(corners[j]);
@@ -1339,10 +1388,12 @@ namespace UnityEngine.UI
             }
 
             var bounds = new Bounds(vMin, Vector3.zero);
+            // Grows the Bounds to include the point
             bounds.Encapsulate(vMax);
             return bounds;
         }
 
+        // 计算 Content 相对于 Viewport 的偏移
         private Vector2 CalculateOffset(Vector2 delta)
         {
             return InternalCalculateOffset(ref m_ViewBounds, ref m_ContentBounds, m_Horizontal, m_Vertical, m_MovementType, ref delta);
@@ -1354,25 +1405,33 @@ namespace UnityEngine.UI
             if (movementType == MovementType.Unrestricted)
                 return offset;
 
+            // Content 的左下角
             Vector2 min = contentBounds.min;
+            // Content 的右上角
             Vector2 max = contentBounds.max;
 
+            // 计算x轴 Content 相对于 Viewport 的偏移
             if (horizontal)
             {
                 min.x += delta.x;
                 max.x += delta.x;
+                // Content 在 Viewport 右边，返回负
                 if (min.x > viewBounds.min.x)
                     offset.x = viewBounds.min.x - min.x;
+                // Content 在 Viewport 左边, 返回正
                 else if (max.x < viewBounds.max.x)
                     offset.x = viewBounds.max.x - max.x;
             }
 
+            // 计算y轴 Content 相对于 Viewport 的偏移
             if (vertical)
             {
                 min.y += delta.y;
                 max.y += delta.y;
+                // Content 在 Viewport 下面，返回正
                 if (max.y < viewBounds.max.y)
                     offset.y = viewBounds.max.y - max.y;
+                // Content 在 Viewport 上面，返回负
                 else if (min.y > viewBounds.min.y)
                     offset.y = viewBounds.min.y - min.y;
             }
