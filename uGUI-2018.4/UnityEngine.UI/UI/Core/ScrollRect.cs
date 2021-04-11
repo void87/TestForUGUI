@@ -77,16 +77,19 @@ namespace UnityEngine.UI
         /// <summary>
         /// Enum for which behavior to use for scrollbar visibility.
         /// </summary>
+        /// 滚动条可见性
         public enum ScrollbarVisibility
         {
             /// <summary>
             /// Always show the scrollbar.
             /// </summary>
+            /// 总是可见
             Permanent,
 
             /// <summary>
             /// Automatically hide the scrollbar when no scrolling is needed on this axis. The viewport rect will not be changed.
             /// </summary>
+            /// 自动隐藏
             AutoHide,
 
             /// <summary>
@@ -95,6 +98,7 @@ namespace UnityEngine.UI
             /// <remarks>
             /// When this setting is used, the scrollbar and the viewport rect become driven, meaning that values in the RectTransform are calculated automatically and can't be manually edited.
             /// </remarks>
+            /// 自动隐藏和扩展Viewport
             AutoHideAndExpandViewport,
         }
 
@@ -459,7 +463,9 @@ namespace UnityEngine.UI
         public ScrollRectEvent onValueChanged { get { return m_OnValueChanged; } set { m_OnValueChanged = value; } }
 
         // The offset from handle position to mouse down position
+        // 记录鼠标点击时，鼠标在Viewport局部空间的坐标
         private Vector2 m_PointerStartLocalCursor = Vector2.zero;
+        // 记录拖动开始时， Content 的起始 anchoredPosition
         protected Vector2 m_ContentStartPosition = Vector2.zero;
 
         private RectTransform m_ViewRect;
@@ -482,6 +488,7 @@ namespace UnityEngine.UI
         // Viewport的Bounds
         private Bounds m_ViewBounds;
 
+        // Content 的 anchoredPosition 的位置改变/每秒
         private Vector2 m_Velocity;
 
         /// <summary>
@@ -490,21 +497,29 @@ namespace UnityEngine.UI
         /// <remarks>
         /// The velocity is defined in units per second.
         /// </remarks>
+        ///
+        /// Content 的 anchoredPosition 的位置改变/每秒
         public Vector2 velocity { get { return m_Velocity; } set { m_Velocity = value; } }
 
+        // 是否拖动
         private bool m_Dragging;
+        // 是否滚动
         private bool m_Scrolling;
 
+        // 上一个 Content.anchoredPosition 数据
         private Vector2 m_PrevPosition = Vector2.zero;
+        // 上一个 Content.Bounds 数据
         private Bounds m_PrevContentBounds;
+        // 上一个 Viewport.Bounds 数据
         private Bounds m_PrevViewBounds;
 
         // 是否已经 LayoutRebuild 过了
         [NonSerialized]
         private bool m_HasRebuiltLayout = false;
 
-        // HorizontalScroll是否扩展Scroll
+        // HorizontalScroll是否扩展 Viewport
         private bool m_HSliderExpand;
+        // VerticalScroll是否扩展 Viewport
         private bool m_VSliderExpand;
         // HorizontalScroll的高度
         private float m_HSliderHeight;
@@ -790,18 +805,23 @@ namespace UnityEngine.UI
             if (!IsActive())
                 return;
 
+            // 记录鼠标拖动时，鼠标在Viewport局部空间的坐标
             Vector2 localCursor;
             if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(viewRect, eventData.position, eventData.pressEventCamera, out localCursor))
                 return;
 
             UpdateBounds();
 
+            // 获取 鼠标的位置的 delta
             var pointerDelta = localCursor - m_PointerStartLocalCursor;
+            // 赋值新的 Content.anchoredPosition
             Vector2 position = m_ContentStartPosition + pointerDelta;
 
             // Offset to get content into place in the view.
+            // 计算 Content 相对于 Viewport 的偏移
             Vector2 offset = CalculateOffset(position - m_Content.anchoredPosition);
             position += offset;
+
             if (m_MovementType == MovementType.Elastic)
             {
                 if (offset.x != 0)
@@ -810,21 +830,26 @@ namespace UnityEngine.UI
                     position.y = position.y - RubberDelta(offset.y, m_ViewBounds.size.y);
             }
 
+            // 设置新的 Content 的 anchoredPosition
             SetContentAnchoredPosition(position);
         }
 
         /// <summary>
         /// Sets the anchored position of the content.
         /// </summary>
+        /// 设置 Content.anchoredPosition
         protected virtual void SetContentAnchoredPosition(Vector2 position)
         {
+            // 不能水平移动
             if (!m_Horizontal)
                 position.x = m_Content.anchoredPosition.x;
+            // 不能垂直移动
             if (!m_Vertical)
                 position.y = m_Content.anchoredPosition.y;
 
             if (position != m_Content.anchoredPosition)
             {
+                // 设置 Content.anchoredPosition
                 m_Content.anchoredPosition = position;
                 UpdateBounds();
             }
@@ -838,30 +863,46 @@ namespace UnityEngine.UI
             EnsureLayoutHasRebuilt();
             UpdateBounds();
             float deltaTime = Time.unscaledDeltaTime;
+            // 计算 Content 相对于 Viewport 的偏移
             Vector2 offset = CalculateOffset(Vector2.zero);
+
+            // 没有拖动, 但是有 offset || m_Velocity
             if (!m_Dragging && (offset != Vector2.zero || m_Velocity != Vector2.zero))
             {
+                // 获取 Content.anchoredPosition, 用于 SetContentAnchoredPosition
                 Vector2 position = m_Content.anchoredPosition;
+
+                // axis == 0, x轴
+                // axis == 1, y轴
                 for (int axis = 0; axis < 2; axis++)
                 {
                     // Apply spring physics if movement is elastic and content has an offset from the view.
                     if (m_MovementType == MovementType.Elastic && offset[axis] != 0)
                     {
+                        // 获取单轴的速度
                         float speed = m_Velocity[axis];
                         float smoothTime = m_Elasticity;
+
                         if (m_Scrolling)
                             smoothTime *= 3.0f;
+
+                        // Damp
                         position[axis] = Mathf.SmoothDamp(m_Content.anchoredPosition[axis], m_Content.anchoredPosition[axis] + offset[axis], ref speed, smoothTime, Mathf.Infinity, deltaTime);
+
                         if (Mathf.Abs(speed) < 1)
                             speed = 0;
+
                         m_Velocity[axis] = speed;
                     }
                     // Else move content according to velocity with deceleration applied.
+                    // 计算惯性
                     else if (m_Inertia)
                     {
                         m_Velocity[axis] *= Mathf.Pow(m_DecelerationRate, deltaTime);
+
                         if (Mathf.Abs(m_Velocity[axis]) < 1)
                             m_Velocity[axis] = 0;
+
                         position[axis] += m_Velocity[axis] * deltaTime;
                     }
                     // If we have neither elaticity or friction, there shouldn't be any velocity.
@@ -880,36 +921,52 @@ namespace UnityEngine.UI
                 SetContentAnchoredPosition(position);
             }
 
+            // 拖动且有惯性
             if (m_Dragging && m_Inertia)
             {
+                // Content的 这一帧的 anchoredPosition 减上一帧的 anchoredPosition 得到新速度
                 Vector3 newVelocity = (m_Content.anchoredPosition - m_PrevPosition) / deltaTime;
+                // 插值一下就得到 m_Velocity, 也就是 anchoredPosition的改变
                 m_Velocity = Vector3.Lerp(m_Velocity, newVelocity, deltaTime * 10);
             }
 
             if (m_ViewBounds != m_PrevViewBounds || m_ContentBounds != m_PrevContentBounds || m_Content.anchoredPosition != m_PrevPosition)
             {
+                // 更新滚动条的value
                 UpdateScrollbars(offset);
+
                 UISystemProfilerApi.AddMarker("ScrollRect.value", this);
+                // 调用滚动条事件
                 m_OnValueChanged.Invoke(normalizedPosition);
+
                 UpdatePrevData();
             }
+
+            // 设置滚动条的可见性
             UpdateScrollbarVisibility();
+
+            // 滚动结束
             m_Scrolling = false;
         }
 
         /// <summary>
         /// Helper function to update the previous data fields on a ScrollRect. Call this before you change data in the ScrollRect.
         /// </summary>
+        /// 记录 这一帧数据以便下一帧使用
         protected void UpdatePrevData()
         {
+            // 记录Content.anchoredPosition
             if (m_Content == null)
                 m_PrevPosition = Vector2.zero;
             else
                 m_PrevPosition = m_Content.anchoredPosition;
+            // 记录 ViewportBounds
             m_PrevViewBounds = m_ViewBounds;
+            // 记录 ContentBounds
             m_PrevContentBounds = m_ContentBounds;
         }
 
+        // 更新 滚动条的 value
         private void UpdateScrollbars(Vector2 offset)
         {
             if (m_HorizontalScrollbar)
@@ -955,6 +1012,8 @@ namespace UnityEngine.UI
         /// }
         /// </code>
         /// </example>
+        ///
+        /// x,y 两个轴的 归一化值
         public Vector2 normalizedPosition
         {
             get
@@ -990,6 +1049,8 @@ namespace UnityEngine.UI
         /// }
         /// </code>
         /// </example>
+        ///
+        /// 水平滑动条的 归一化值 (0-1)
         public float horizontalNormalizedPosition
         {
             get
@@ -1027,7 +1088,7 @@ namespace UnityEngine.UI
         /// }
         /// </code>
         /// </example>
-
+        // 垂直滚动条归一化值 (1-0)
         public float verticalNormalizedPosition
         {
             get
@@ -1052,23 +1113,31 @@ namespace UnityEngine.UI
         /// </summary>
         /// <param name="value">The position to set, between 0 and 1.</param>
         /// <param name="axis">The axis to set: 0 for horizontal, 1 for vertical.</param>
+        ///
+        /// 设置 x || y 轴的归一化值, 0 = x轴, 1 = y轴
         protected virtual void SetNormalizedPosition(float value, int axis)
         {
             EnsureLayoutHasRebuilt();
             UpdateBounds();
             // How much the content is larger than the view.
+            // 计算 Content 比 Viewport 大多少(x||y轴)
             float hiddenLength = m_ContentBounds.size[axis] - m_ViewBounds.size[axis];
             // Where the position of the lower left corner of the content bounds should be, in the space of the view.
+            // Content 左下角在 Viewport 空间下的位置
             float contentBoundsMinPosition = m_ViewBounds.min[axis] - value * hiddenLength;
             // The new content localPosition, in the space of the view.
+            // 计算 Content 的 LocalPosition
             float newLocalPosition = m_Content.localPosition[axis] + contentBoundsMinPosition - m_ContentBounds.min[axis];
 
             Vector3 localPosition = m_Content.localPosition;
+
             if (Mathf.Abs(localPosition[axis] - newLocalPosition) > 0.01f)
             {
                 localPosition[axis] = newLocalPosition;
+                // 重新设置 Content.localPosition
                 m_Content.localPosition = localPosition;
                 m_Velocity[axis] = 0;
+
                 UpdateBounds();
             }
         }
@@ -1207,12 +1276,16 @@ namespace UnityEngine.UI
             m_ContentBounds = GetBounds();
         }
 
+        // 设置滚动条的可见性
         void UpdateScrollbarVisibility()
         {
+            // 设置垂直滚动条的可见性
             UpdateOneScrollbarVisibility(vScrollingNeeded, m_Vertical, m_VerticalScrollbarVisibility, m_VerticalScrollbar);
+            // 设置水平滚动条的可见性
             UpdateOneScrollbarVisibility(hScrollingNeeded, m_Horizontal, m_HorizontalScrollbarVisibility, m_HorizontalScrollbar);
         }
 
+        // 设置 单个滚动条的可见性
         private static void UpdateOneScrollbarVisibility(bool xScrollingNeeded, bool xAxisEnabled, ScrollbarVisibility scrollbarVisibility, Scrollbar scrollbar)
         {
             if (scrollbar)

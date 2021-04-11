@@ -18,6 +18,8 @@ namespace UnityEngine.UI
         /// <summary>
         /// The padding to add around the child layout elements.
         /// </summary>
+        ///
+        /// 上下左右的间距
         public RectOffset padding { get { return m_Padding; } set { SetProperty(ref m_Padding, value); } }
 
         [SerializeField] protected TextAnchor m_ChildAlignment = TextAnchor.UpperLeft;
@@ -46,10 +48,12 @@ namespace UnityEngine.UI
         private Vector2 m_TotalPreferredSize = Vector2.zero;
         private Vector2 m_TotalFlexibleSize = Vector2.zero;
 
+        // 子物体
         [System.NonSerialized] private List<RectTransform> m_RectChildren = new List<RectTransform>();
         protected List<RectTransform> rectChildren { get { return m_RectChildren; } }
 
         // ILayoutElement Interface
+        // 获取子物体
         public virtual void CalculateLayoutInputHorizontal()
         {
             m_RectChildren.Clear();
